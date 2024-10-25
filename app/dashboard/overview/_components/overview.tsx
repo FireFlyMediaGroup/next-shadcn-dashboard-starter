@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
@@ -13,8 +16,32 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+// Import vendor components
+import SkySpecsOverview from '../../skyspecs/_components/overview';
+import TeamsOverview from '../../teams/_components/overview';
+import ISightOverview from '../../isight/_components/overview';
+import OctocamOverview from '../../octocam/_components/overview';
+import ICOverview from '../../independent-contractors/_components/overview';
 
 export default function OverViewPage() {
+  // Add state management
+  const [selectedTeam, setSelectedTeam] = useState<string>('team-1');
+  const [activeTab, setActiveTab] = useState<string>('overview');
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value !== 'teams') {
+      setSelectedTeam('team-1');
+    }
+  };
+
   return (
     <PageContainer scrollable>
       <div className="space-y-2">
@@ -27,19 +54,43 @@ export default function OverViewPage() {
             <Button>Download</Button>
           </div>
         </div>
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
-          </TabsList>
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="space-y-4"
+        >
+          <div className="flex items-center space-x-4">
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="skyspecs">SkySpecs</TabsTrigger>
+              <TabsTrigger value="teams">Teams</TabsTrigger>
+              <TabsTrigger value="isight">iSight</TabsTrigger>
+              <TabsTrigger value="octocam">Octocam</TabsTrigger>
+              <TabsTrigger value="ic">Independent Contractors</TabsTrigger>
+            </TabsList>
+
+            {activeTab === 'teams' && (
+              <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Team" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="team-1">Team 1</SelectItem>
+                  <SelectItem value="team-2">Team 2</SelectItem>
+                  <SelectItem value="team-3">Team 3</SelectItem>
+                  <SelectItem value="team-4">Team 4</SelectItem>
+                  <SelectItem value="team-5">Team 5</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+          {/* Overview Tab Content */}
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Revenue
+                    Total WTGs Inspected YTD
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -55,16 +106,16 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <div className="text-2xl font-bold">46,672</div>
                   <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
+                    As of 24 OCT 2024
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                    Global WTG/day avg
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -82,15 +133,17 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
+                  <div className="text-2xl font-bold">7.62</div>
                   <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
+                    +6.8% over 2023
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Refly Rate
+                  </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -106,16 +159,16 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
+                  <div className="text-2xl font-bold">9.50%</div>
                   <p className="text-xs text-muted-foreground">
-                    +19% from last month
+                    +5/5% increase over 2023
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Active Now
+                    Weather Standby
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -131,9 +184,9 @@ export default function OverViewPage() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
+                  <div className="text-2xl font-bold">17,750.99 hrs.</div>
                   <p className="text-xs text-muted-foreground">
-                    +201 since last hour
+                    2.35 hrs. per Inspection Day
                   </p>
                 </CardContent>
               </Card>
@@ -160,6 +213,23 @@ export default function OverViewPage() {
                 <PieGraph />
               </div>
             </div>
+          </TabsContent>
+          // In the TabsContent section, replace the placeholder content with:
+          {/* Vendor Tab Contents */}
+          <TabsContent value="skyspecs" className="space-y-4">
+            <SkySpecsOverview />
+          </TabsContent>
+          <TabsContent value="teams" className="space-y-4">
+            <TeamsOverview teamNumber={selectedTeam} />
+          </TabsContent>
+          <TabsContent value="isight" className="space-y-4">
+            <ISightOverview />
+          </TabsContent>
+          <TabsContent value="octocam" className="space-y-4">
+            <OctocamOverview />
+          </TabsContent>
+          <TabsContent value="ic" className="space-y-4">
+            <ICOverview />
           </TabsContent>
         </Tabs>
       </div>
